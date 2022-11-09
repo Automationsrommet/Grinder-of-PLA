@@ -1,6 +1,5 @@
 //grinder 
 
-
 //Input parameters
 squareedge=41;
 diskthickness=3;
@@ -16,22 +15,33 @@ for (k=[0:diskthickness*2+margin*2:50]){
 for (i=[-1:2:1]){
     for(l=[0:1:1]){
     
-rotate([0,0,90*i])translate([k*i-diskthickness/2-margin/2,arm,0])rotate([0,90,0])disk();
-
+rotate([0,0,90*i])translate([k*i-diskthickness/2-margin/2,arm-4,0])rotate([0,90,0])disk();
+rotate([0,0,90*i])translate([k*i+diskthickness/2+margin/2,arm-3,0])rotate([0,90,0])spacer();
 }
 }
 }
 
 module disk (){
+    rotate([0,0,-$t*90])
 difference(){
    
-    cube([41,41,3],center=true);
-    cylinder(4,7,7,center=true);
+    color("silver")cube([41,41,diskthickness],center=true);
+    color("cyan")cylinder(4,7,7,center=true);
     for(j=[0:90:270]){
     rotate([0,0,j])
     
-    translate([squareedge/2,squareedge/3,0])cylinder(4,8,8,center=true);
+    color("cyan")translate([squareedge/2,squareedge/3,0])cylinder(4,8,8,center=true);
 }
+
+}
+}
+
+module spacer (){
+difference(){
+   
+    color("grey")cylinder(3,10,10,center=true);
+    color("grey")cylinder(4,7,7,center=true);
+   
 
 }
 }
