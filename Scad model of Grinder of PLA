@@ -1,0 +1,37 @@
+//grinder 
+
+
+//Input parameters
+squareedge=41;
+diskthickness=3;
+diskholeradius=7;
+margin=0.2;
+disks=12;
+arm=(sqrt((squareedge*squareedge)*2)-2*diskholeradius)/2;
+
+detail=19;
+
+$fn=detail;
+for (k=[0:diskthickness*2+margin*2:50]){
+for (i=[-1:2:1]){
+    for(l=[0:1:1]){
+    
+rotate([0,0,90*i])translate([k*i-diskthickness/2-margin/2,arm,0])rotate([0,90,0])disk();
+
+}
+}
+}
+
+module disk (){
+difference(){
+   
+    cube([41,41,3],center=true);
+    cylinder(4,7,7,center=true);
+    for(j=[0:90:270]){
+    rotate([0,0,j])
+    
+    translate([squareedge/2,squareedge/3,0])cylinder(4,8,8,center=true);
+}
+
+}
+}
