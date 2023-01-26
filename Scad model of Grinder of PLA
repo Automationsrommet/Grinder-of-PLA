@@ -1,4 +1,4 @@
-//grinder 
+//grinder FPS=2, Steps=10
 
 //Input parameters
 squareedge=41;
@@ -6,42 +6,115 @@ diskthickness=3;
 diskholeradius=7;
 margin=0.2;
 disks=12;
-arm=(sqrt((squareedge*squareedge)*2)-2*diskholeradius)/2;
+bearingprofile=6;
+tooth=6;
+teeth=15;
+rod=225;
+length=200;
+width=170;
+heigth=100;
 
+arm=(sqrt((squareedge*squareedge)*2)-2*diskholeradius)/2;
+centers=arm-4;
 detail=19;
 
 $fn=detail;
+
 for (k=[0:diskthickness*2+margin*2:50]){
 for (i=[-1:2:1]){
     for(l=[0:1:1]){
     
-rotate([0,0,90*i])translate([k*i-diskthickness/2-margin/2,arm-4,0])rotate([0,90,0])disk();
-rotate([0,0,90*i])translate([k*i+diskthickness/2+margin/2,arm-3,0])rotate([0,90,0])spacer();
+rotate([0,0,90*i])translate([k*i-diskthickness/2-margin/2,centers,0])rotate([0,90,0])disk();
+rotate([0,0,90*i])translate([k*i+diskthickness/2+margin/2,centers,0])rotate([0,90,0])spacer();
+}
+translate([i*centers,3,0])axel(0);
+translate([centers,40,0])axel(0);
+for (j=[-1:2:1]){
+translate([centers*i,22.5+6+j*102,0])rotate([0,360/(teeth*4)-$t*90*-i,0])gear();
 }
 }
+}
+box();
+bearingplate();
+translate([centers,160,0])rotate([0,-$t*90,0])pulley();
+motor();
+gearcovers();
+module gearcovers(){
+    
+}
+module motor(){
+    
+}
+module pulley(){
+    intersection(){
+        union(){
+  color("green")rotate([90,0,0])cylinder(20,diskholeradius*2,diskholeradius*2,center=true);
+   color("green")rotate([90,0,0])cylinder(10,68,68,center=true);
+    difference(){union(){
+   color("green")rotate([90,0,0])cylinder(14,75,55,center=true);
+   color("green")rotate([90,0,0])cylinder(14,55,75,center=true);    
+    }    
+   color("green")rotate([90,0,0])cylinder(15,50,50,center=true);
+    } 
+}
+color("silver")minkowski(){
+    rotate([90,0,0])cylinder(12,73,73,center=true);
+    sphere(1);
+}
+}
+}
+module gear(){
+    color("red")for(i=[0:360/teeth:360]){
+    rotate([90,0,0])linear_extrude(12)rotate([0,0,i])
+    polygon([[1.6,diskholeradius+margin],[-1.6,diskholeradius+margin],[-centers*PI/(teeth),centers-tooth/2-margin-1],[-centers*PI/(teeth*2),centers-tooth/2-margin],[-centers*PI/(teeth*4),centers+tooth/2-margin],[centers*PI/(teeth*4),centers+tooth/2-margin],[centers*PI/(teeth*2),centers-tooth/2-margin],[centers*PI/(teeth),centers-tooth/2-margin-1]]);
+}
+}
+module box(){
+    color("yellow")translate([0,22.5,0])difference(){
+        cube([length,width,heigth],center=true);
+        cube([length-2*50,width-2*50,heigth+50],center=true);
+        translate([centers,0,0])axel(1);
+        translate([-centers,0,0])axel(1);
+    }
 }
 
+module axel(m){
+color("silver")translate([0,20,0])rotate([90,0,0])cylinder(rod,diskholeradius-margin+m,diskholeradius-margin+m,center=true);
+}
+module bearing(){
+        color("silver")rotate([90,0,0])difference(){
+        cylinder(8,diskholeradius+bearingprofile,diskholeradius+bearingprofile,center=true);
+    cylinder(9,diskholeradius+margin,diskholeradius+margin,center=true);
+    }
+}
+module bearingplate(){
+    for(i=[-1:2:1]){
+        for(j=[30.5:59:100]){
+    color("grey")translate([0,22.5+i*j,0])difference(){
+        cube([length-110,8,heigth-10],center=true);        
+        translate([centers,0,0])axel(bearingprofile);
+        translate([-centers,0,0])axel(bearingprofile);
+        
+    }
+    translate([centers,22.5+i*j,0])bearing();
+    translate([-centers,22.5+i*j,0])bearing();
+    }
+    }
+}
 module disk (){
     rotate([0,0,-$t*90])
-difference(){
-   
+difference(){   
     color("silver")cube([41,41,diskthickness],center=true);
     color("cyan")cylinder(4,7,7,center=true);
     for(j=[0:90:270]){
-    rotate([0,0,j])
-    
+    rotate([0,0,j])    
     color("cyan")translate([squareedge/2,squareedge/3,0])cylinder(4,8,8,center=true);
 }
-
 }
 }
-
 module spacer (){
-difference(){
-   
+difference(){   
     color("grey")cylinder(3,10,10,center=true);
     color("grey")cylinder(4,7,7,center=true);
-   
-
 }
 }
